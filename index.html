@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Click Speed Test - 10 Second CPS Challenge | TapArena</title>
+
+    <meta name="description"
+        content="Take the 10 second click speed test and check your CPS score. Compete on the global leaderboard and see how fast you really are.">
+
+    <meta name="keywords"
+        content="click speed test, cps test, 10 second cps test, fast click challenge, world click ranking">
+
+    <meta property="og:title" content="Click Speed Test - Global CPS Leaderboard">
+    <meta property="og:description" content="Test your click speed and compete worldwide.">
+    <meta property="og:type" content="website">
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Orbitron', sans-serif;
+            background: radial-gradient(circle at top, #1a1a2e, #0f0f1b);
+            color: white;
+            text-align: center;
+        }
+
+        header {
+            padding: 20px;
+            font-size: clamp(18px, 4vw, 28px);
+            letter-spacing: 2px;
+            background: linear-gradient(90deg, #ff004c, #6a00ff);
+            box-shadow: 0 0 20px #ff004c;
+        }
+
+        #leaderboard ul {
+            padding: 0;
+            margin: 0;
+        }
+
+        #leaderboard li {
+            list-style: none;
+            margin: 10px 0;
+            padding: 12px 16px;
+        }
+
+        .container {
+            padding: 20px;
+            max-width: 900px;
+            margin: auto;
+        }
+
+        h2 {
+            margin: 10px 0;
+            font-size: clamp(16px, 3vw, 22px);
+        }
+
+        #timer {
+            color: #00fff7;
+            text-shadow: 0 0 10px #00fff7;
+        }
+
+        #score {
+            color: #ffea00;
+            text-shadow: 0 0 10px #ffea00;
+        }
+
+        input {
+            width: 90%;
+            max-width: 300px;
+            padding: 12px;
+            margin: 15px auto;
+            border-radius: 8px;
+            border: 2px solid #6a00ff;
+            background: #111;
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            text-align: center;
+            display: block;
+        }
+
+        #leaderboard li:nth-child(1) {
+            background: linear-gradient(90deg, #ff0090, #c12189);
+            color: black;
+            font-weight: bold;
+        }
+
+        button {
+            width: min(60vw, 230px);
+            height: min(60vw, 230px);
+            max-width: 230px;
+            max-height: 230px;
+            font-size: clamp(18px, 4vw, 26px);
+            border: none;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ff004c, #6a00ff);
+            color: white;
+            cursor: pointer;
+            box-shadow: 0 0 25px #ff004c;
+            transition: 0.2s;
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        .ad {
+            margin: 20px auto;
+            padding: 20px;
+            background: #141414;
+            border: 2px dashed #444;
+            width: 95%;
+            max-width: 728px;
+            color: #888;
+        }
+
+        #leaderboard {
+            margin-top: 30px;
+            padding: 20px;
+            background: #111;
+            border-radius: 12px;
+            box-shadow: 0 0 20px #6a00ff;
+            width: 95%;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        #leaderboard h2 {
+            color: #00fff7;
+            margin-bottom: 15px;
+        }
+
+        #leaderboard li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 18px;
+            margin: 10px 0;
+            background: #1a1a1a;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .player-name {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .player-score {
+            font-weight: bold;
+            color: #ffea00;
+        }
+
+        /* 📱 Extra small devices */
+        @media (max-width:480px) {
+            header {
+                padding: 15px;
+            }
+
+            .container {
+                padding: 15px;
+            }
+        }
+
+        /* 💻 Large screens */
+        @media (min-width:1024px) {
+            .container {
+                padding: 40px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>TapArena - 10 Second Click Challenge</header>
+
+    <!-- TOP AD SPACE -->
+    <div class="ad">
+        AD SPACE (Insert Google AdSense Code Here)
+    </div>
+
+    <div class="container">
+        <h2 id="timer">Time: 10</h2>
+        <h2 id="score">Score: 0</h2>
+        <h2 id="cps">CPS: 0</h2>
+        <input type="text" id="nickname" placeholder="Enter nickname">
+        <br>
+        <button id="tapBtn">TAP!</button>
+
+        <div id="leaderboard">
+            <h2>🌍 Global Top 10</h2>
+            <ul id="topList"></ul>
+        </div>
+        <section style="max-width:800px;margin:50px auto;text-align:left;padding:20px;">
+            <h2>What is a Click Speed Test?</h2>
+            <p>
+                A click speed test measures how many times you can click within a specific time period.
+                The most popular version is the 10 second CPS test.
+            </p>
+
+            <h2>How is CPS calculated?</h2>
+            <p>
+                CPS stands for Clicks Per Second. It is calculated by dividing the total number of clicks
+                by the total time in seconds.
+            </p>
+
+            <h2>Why train your clicking speed?</h2>
+            <p>
+                Improving your click speed can help in competitive gaming, reaction time training,
+                and improving mouse control skills.
+            </p>
+
+            <h2>How to get a higher CPS score?</h2>
+            <ul>
+                <li>Use your index finger</li>
+                <li>Keep your wrist relaxed</li>
+                <li>Use butterfly clicking technique</li>
+                <li>Practice daily</li>
+            </ul>
+        </section>
+    </div>
+
+    <!-- BOTTOM AD SPACE -->
+    <div class="ad">
+        AD SPACE (Insert Google AdSense Code Here)
+    </div>
+
+    <script>
+        // =====================
+        // FIREBASE CONFIG
+        // Replace with your own config
+        // =====================
+        const firebaseConfig = {
+            apiKey: "AIzaSyCJCC9l84h1vxbluC8F6zWVY5Vjkyi3aY0",
+            authDomain: "cpsarena.firebaseapp.com",
+            databaseURL: "https://cpsarena-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "cpsarena",
+            storageBucket: "cpsarena.firebasestorage.app",
+            messagingSenderId: "1084317735432",
+            appId: "1:1084317735432:web:c5230bfdbae6022213cfbd",
+            measurementId: "G-N3SJV0CDVS"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // =====================
+        // GAME LOGIC
+        // =====================
+        let time = 10;
+        let score = 0;
+        let active = false;
+        let interval;
+
+        const timerText = document.getElementById("timer");
+        const scoreText = document.getElementById("score");
+        const btn = document.getElementById("tapBtn");
+
+        btn.onclick = function () {
+            if (!active) {
+                startGame();
+            }
+            if (active) {
+                score++;
+                scoreText.innerText = "Score: " + score;
+            }
+        }
+
+        function startGame() {
+            active = true;
+            score = 0;
+            time = 10;
+            scoreText.innerText = "Score: 0";
+            timerText.innerText = "Time: 10";
+
+            interval = setInterval(() => {
+                time--;
+                timerText.innerText = "Time: " + time;
+
+                if (time <= 0) {
+                    clearInterval(interval);
+                    active = false;
+                    saveScore();
+                    alert("Game Over! Your Score: " + score);
+                    const cpsText = document.getElementById("cps");
+                    cpsText.innerText = "CPS: " + (score / 10).toFixed(2);
+                }
+            }, 1000);
+        }
+
+        // =====================
+        // SAVE SCORE
+        // =====================
+        function saveScore() {
+            const name = document.getElementById("nickname").value || "Anonymous";
+
+            database.ref("scores").push({
+                name: name,
+                score: score,
+                timestamp: Date.now()
+            });
+        }
+
+        // =====================
+        // LOAD LEADERBOARD
+        // =====================
+        database.ref("scores")
+            .orderByChild("score")
+            .limitToLast(10)
+            .on("value", snapshot => {
+                const list = document.getElementById("topList");
+                list.innerHTML = "";
+                let data = [];
+                snapshot.forEach(child => {
+                    data.push(child.val());
+                });
+                data.reverse();
+                data.forEach((item, index) => {
+                    let medal = "";
+                    if (index === 0) medal = "🥇";
+                    if (index === 1) medal = "🥈";
+                    if (index === 2) medal = "🥉";
+
+                    list.innerHTML += `
+    <li>
+      <span class="player-name">${medal} ${item.name}</span>
+      <span class="player-score">${item.score}</span>
+    </li>
+  `;
+                });
+            });
+    </script>
+
+</body>
+
+</html>
