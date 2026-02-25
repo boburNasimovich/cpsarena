@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
     <title>Click Speed Test - 10 Second CPS Challenge | TapArena</title>
 
     <meta name="description"
@@ -32,6 +33,11 @@
             background: radial-gradient(circle at top, #1a1a2e, #0f0f1b);
             color: white;
             text-align: center;
+        }
+
+        html,
+        body {
+            touch-action: manipulation;
         }
 
         header {
