@@ -13,6 +13,7 @@
           "user-select"
         ]
       }
-    ]
+    ],
+    "disown-opener": "off"
   }
 }
