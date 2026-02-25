@@ -1,5 +1,20 @@
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
 
+        body,
+        button,
+        h1,
+        h2,
+        h3,
+        p,
+        li,
+        span {
+            -webkit-user-select: none;
+            /* Safari */
+            -ms-user-select: none;
+            /* IE */
+            user-select: none;
+        }
+
         * {
             box-sizing: border-box;
             user-select: none;
