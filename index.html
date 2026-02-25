@@ -141,6 +141,7 @@
                     clearInterval(interval);
                     active = false;
                     saveScore();
+                    alert("Game Over! Your Score: " + score);
                     const cpsText = document.getElementById("cps");
                     cpsText.innerText = "CPS: " + (score / 10).toFixed(2);
                 }
